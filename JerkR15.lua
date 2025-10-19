@@ -1,4 +1,4 @@
--- This script was generated using the MoonVeil Obfuscator v1.4.5 [https://moonveil.cc]
+-- made by mys (obfuscated by moonveil yes ik i removed the moonveil tag)
 
 local H=bit32.bxor
 local ca,X,fa_,I,Da,V,r_;
