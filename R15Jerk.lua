@@ -1,3 +1,6 @@
+-- Give Full Cred If Used
+-- Made By Mys
+
 local player = game.Players.LocalPlayer
 
 local config = {
@@ -18,7 +21,7 @@ local Tool = {}
 
 function Tool:Create()
 	if tool then return end
-	
+	print("R15 jerk made by mys")
 	tool = Instance.new("Tool")
 	tool.Name = config.ToolName
 	
