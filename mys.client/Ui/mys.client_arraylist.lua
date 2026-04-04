@@ -5,8 +5,7 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local screenGui
 local labelList = {}
-local activeLabels = {}
-
+local activeLabels = {} 
 local function getUIParent()
     if type(gethui) == "function" then
         local ok, res = pcall(gethui)
@@ -22,7 +21,6 @@ local function getUIParent()
     end
     return CoreGui
 end
-
 local function initGUI()
     if screenGui then return end
     local core = getUIParent()
@@ -45,7 +43,6 @@ local function initGUI()
     end)
     screenGui.Parent = core
 end
-
 local function spawnFloatingStars(container)
     container.ClipsDescendants = true
     for i = 1, math.random(7, 15) do
@@ -67,7 +64,6 @@ local function spawnFloatingStars(container)
         end)
     end
 end
-
 local function updateLabelStack()
     table.sort(labelList, function(a, b)
         if a.priority ~= b.priority then
@@ -75,30 +71,35 @@ local function updateLabelStack()
         end
         return a.label.TextBounds.X < b.label.TextBounds.X
     end)
-
     local y = 80
     for i, entry in ipairs(labelList) do
         if entry.label.Visible then
-            local stackedLabelPos = UDim2.new(1, -entry.label.Size.X.Offset - 10, 0, y)
+            local endX = 1
+            local stackedLabelPos = UDim2.new(endX, -entry.label.Size.X.Offset - 10, 0, y)
             local stackedDescPos = UDim2.new(
                 stackedLabelPos.X.Scale,
                 stackedLabelPos.X.Offset - (entry.desc.Size.X.Offset + 10),
                 stackedLabelPos.Y.Scale,
                 stackedLabelPos.Y.Offset
             )
-
             entry.stackedLabelPos = stackedLabelPos
             entry.stackedDescPos = stackedDescPos
-
-            local tweenInfo = TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, (i-1) * 0.04)
+            local startLabelPos = UDim2.new(1.2, -entry.label.Size.X.Offset - 10, 0, y)
+            local startDescPos = UDim2.new(
+                startLabelPos.X.Scale,
+                startLabelPos.X.Offset - (entry.desc.Size.X.Offset + 10),
+                startLabelPos.Y.Scale,
+                startLabelPos.Y.Offset
+            )
+            entry.label.Position = startLabelPos
+            entry.desc.Position = startDescPos
+            local tweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, (i-1) * 0.05)
             TweenService:Create(entry.label, tweenInfo, {Position = stackedLabelPos}):Play()
             TweenService:Create(entry.desc, tweenInfo, {Position = stackedDescPos}):Play()
-
             y = y + entry.label.Size.Y.Offset + 10
         end
     end
 end
-
 local function createarraylabel(name, title, description)
     initGUI()
     local label = Instance.new("TextLabel")
@@ -107,28 +108,25 @@ local function createarraylabel(name, title, description)
     label.Visible = false
     label.Active = true
     label.Parent = screenGui
-    label.BackgroundTransparency = 0.1
-    label.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    label.BackgroundTransparency = 0.05
+    label.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
     label.BorderSizePixel = 0
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.ClipsDescendants = true
     label.FontFace = Font.new("rbxasset://fonts/families/Nunito.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-    label.TextSize = 17
+    label.TextSize = 20
     label.TextScaled = false
     task.wait(0.05)
-    label.Size = UDim2.new(0, label.TextBounds.X + 25, 0, 30)
+    label.Size = UDim2.new(0, label.TextBounds.X + 16, 0, 30)
     label.TextXAlignment = Enum.TextXAlignment.Center
     label.TextYAlignment = Enum.TextYAlignment.Center
-
     local uiCorner = Instance.new("UICorner")
     uiCorner.CornerRadius = UDim.new(0, 6)
     uiCorner.Parent = label
-
     local gradient = Instance.new("UIGradient")
     gradient.Rotation = 0
     gradient.Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(200,200,200))
     gradient.Parent = label
-
     task.spawn(function()
         local offset = -1
         while label.Parent do
@@ -138,9 +136,7 @@ local function createarraylabel(name, title, description)
             task.wait(0.03)
         end
     end)
-
     spawnFloatingStars(label)
-
     local descBox = Instance.new("TextLabel")
     descBox.Text = description or "Description"
     descBox.BackgroundColor3 = label.BackgroundColor3
@@ -151,32 +147,21 @@ local function createarraylabel(name, title, description)
     descBox.TextSize = label.TextSize
     descBox.TextXAlignment = label.TextXAlignment
     descBox.TextYAlignment = label.TextYAlignment
-
     local uiCornerDesc = Instance.new("UICorner")
     uiCornerDesc.CornerRadius = uiCorner.CornerRadius
     uiCornerDesc.Parent = descBox
-
     descBox.Visible = false
     descBox.Parent = screenGui
     task.wait(0.05)
     descBox.Size = UDim2.new(0, descBox.TextBounds.X + 16, 0, descBox.TextBounds.Y + 8)
-
     local priority = false
     if title:find("Owner") or title:find("Staff") or title:find("Admin") then
         priority = true
     end
-
     local entry = {label = label, desc = descBox, priority = priority}
     table.insert(labelList, entry)
-    activeLabels[name] = entry
-
-    -- Set initial position off-screen right before first tween
-    label.Position = UDim2.new(1.2, -label.Size.X.Offset - 10, 0, 80)
-    descBox.Position = UDim2.new(1.2, -descBox.Size.X.Offset - 20, 0, 80)
-
     label.Visible = true
     updateLabelStack()
-
     label.MouseEnter:Connect(function()
         descBox.Visible = true
         descBox.BackgroundTransparency = 1
@@ -186,7 +171,6 @@ local function createarraylabel(name, title, description)
         TweenService:Create(descBox, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = UDim2.new(entry.stackedDescPos.X.Scale, entry.stackedDescPos.X.Offset - 30, entry.stackedDescPos.Y.Scale, entry.stackedDescPos.Y.Offset), BackgroundTransparency = 0.2, TextTransparency = 0}):Play()
     end)
-
     label.MouseLeave:Connect(function()
         TweenService:Create(label, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = entry.stackedLabelPos}):Play()
@@ -197,18 +181,17 @@ local function createarraylabel(name, title, description)
         TweenService:Create(descBox, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = entry.stackedDescPos}):Play()
     end)
-
+    activeLabels[name] = {label = label, desc = descBox}
     return label
 end
-
 function _G.removearraylabel(name)
     if activeLabels[name] then
         local data = activeLabels[name]
         if data.label and data.label.Parent then data.label:Destroy() end
         if data.desc and data.desc.Parent then data.desc:Destroy() end
         activeLabels[name] = nil
-        for i = #labelList, 1, -1 do
-            if labelList[i].label == data.label then
+        for i, entry in ipairs(labelList) do
+            if entry.label == data.label then
                 table.remove(labelList, i)
                 break
             end
@@ -216,5 +199,4 @@ function _G.removearraylabel(name)
         updateLabelStack()
     end
 end
-
-_G.createarraylabel = createarraylabel
+_G.createarraylabel= createarraylabel
