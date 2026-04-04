@@ -75,6 +75,7 @@ local function updateLabelStack()
         end
         return a.label.TextBounds.X < b.label.TextBounds.X
     end)
+
     local y = 80
     for i, entry in ipairs(labelList) do
         if entry.label.Visible then
@@ -85,6 +86,7 @@ local function updateLabelStack()
                 stackedLabelPos.Y.Scale,
                 stackedLabelPos.Y.Offset
             )
+
             entry.stackedLabelPos = stackedLabelPos
             entry.stackedDescPos = stackedDescPos
 
@@ -105,16 +107,16 @@ local function createarraylabel(name, title, description)
     label.Visible = false
     label.Active = true
     label.Parent = screenGui
-    label.BackgroundTransparency = 0.05
-    label.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    label.BackgroundTransparency = 0.1
+    label.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     label.BorderSizePixel = 0
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.ClipsDescendants = true
     label.FontFace = Font.new("rbxasset://fonts/families/Nunito.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-    label.TextSize = 22
+    label.TextSize = 17
     label.TextScaled = false
     task.wait(0.05)
-    label.Size = UDim2.new(0, label.TextBounds.X + 16, 0, 30)
+    label.Size = UDim2.new(0, label.TextBounds.X + 25, 0, 30)
     label.TextXAlignment = Enum.TextXAlignment.Center
     label.TextYAlignment = Enum.TextYAlignment.Center
 
@@ -167,6 +169,10 @@ local function createarraylabel(name, title, description)
     local entry = {label = label, desc = descBox, priority = priority}
     table.insert(labelList, entry)
     activeLabels[name] = entry
+
+    -- Set initial position off-screen right before first tween
+    label.Position = UDim2.new(1.2, -label.Size.X.Offset - 10, 0, 80)
+    descBox.Position = UDim2.new(1.2, -descBox.Size.X.Offset - 20, 0, 80)
 
     label.Visible = true
     updateLabelStack()
