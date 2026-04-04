@@ -1,28 +1,8 @@
-local Create = {}
-function Create:arraylabel(name, title, description)
-    if _G.createarraylabel then
-        return _G.createarraylabel(name, title, description)
-    else
-        warn("createarraylabel function not found!")
-        return nil
-    end
-end
-_G.Create = Create
-
-local Remove = {}
-function Remove:arraylabel(name)
-    if _G.RemoveStatusLabel then
-        _G.RemoveStatusLabel(name)
-    else
-        warn("RemoveStatusLabel function not found!")
-    end
-end
-_G.Remove = Remove
-
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
+
 local screenGui
 local labelList = {}
 local activeLabels = {}
@@ -227,3 +207,24 @@ function _G.RemoveStatusLabel(name)
 end
 
 _G.createarraylabel = createarraylabel
+
+local Create = {}
+function Create:arraylabel(name, title, description)
+    if _G.createarraylabel then
+        return _G.createarraylabel(name, title, description)
+    else
+        warn("createarraylabel function not found!")
+        return nil
+    end
+end
+_G.Create = Create
+
+local Remove = {}
+function Remove:arraylabel(name)
+    if _G.RemoveStatusLabel then
+        _G.RemoveStatusLabel(name)
+    else
+        warn("RemoveStatusLabel function not found!")
+    end
+end
+_G.Remove = Remove
