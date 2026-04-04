@@ -1,10 +1,32 @@
+local Create = {}
+function Create:arraylabel(name, title, description)
+    if _G.createarraylabel then
+        return _G.createarraylabel(name, title, description)
+    else
+        warn("createarraylabel function not found!")
+        return nil
+    end
+end
+_G.Create = Create
+
+local Remove = {}
+function Remove:arraylabel(name)
+    if _G.RemoveStatusLabel then
+        _G.RemoveStatusLabel(name)
+    else
+        warn("RemoveStatusLabel function not found!")
+    end
+end
+_G.Remove = Remove
+
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local screenGui
 local labelList = {}
-local activeLabels = {} 
+local activeLabels = {}
+
 local function getUIParent()
     if type(gethui) == "function" then
         local ok, res = pcall(gethui)
@@ -20,6 +42,7 @@ local function getUIParent()
     end
     return CoreGui
 end
+
 local function initGUI()
     if screenGui then return end
     local core = getUIParent()
@@ -42,6 +65,7 @@ local function initGUI()
     end)
     screenGui.Parent = core
 end
+
 local function spawnFloatingStars(container)
     container.ClipsDescendants = true
     for i = 1, math.random(7, 15) do
@@ -63,6 +87,7 @@ local function spawnFloatingStars(container)
         end)
     end
 end
+
 local function updateLabelStack()
     table.sort(labelList, function(a, b)
         if a.priority ~= b.priority then
@@ -99,7 +124,8 @@ local function updateLabelStack()
         end
     end
 end
-local function createStatusLabel(name, title, description)
+
+local function createarraylabel(name, title, description)
     initGUI()
     local label = Instance.new("TextLabel")
     label.Name = name
@@ -183,6 +209,7 @@ local function createStatusLabel(name, title, description)
     activeLabels[name] = {label = label, desc = descBox}
     return label
 end
+
 function _G.RemoveStatusLabel(name)
     if activeLabels[name] then
         local data = activeLabels[name]
@@ -198,4 +225,5 @@ function _G.RemoveStatusLabel(name)
         updateLabelStack()
     end
 end
-_G.createStatusLabel = createStatusLabel
+
+_G.createarraylabel = createarraylabel
