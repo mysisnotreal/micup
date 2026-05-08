@@ -336,3 +336,5 @@ getgenv().AnimationModule = {
 	LoadAnimationPack = LoadAnimationPack,
 	Packs = Packs
 }
+
+return getgenv().AnimationModule
